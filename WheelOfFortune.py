@@ -67,6 +67,7 @@ def playerTurn(p,g,name):
             fail = solve()
             if not fail:
                 solvedPlayer = True
+                return solvedPlayer
         wordAsString = convertToString(blankWord)
         print(f"You progress is {wordAsString}")
         if wordAsString == word:
@@ -260,11 +261,10 @@ while playGame:
                     blankWord[i] = given[j]
     wordAsString = convertToString(blankWord)
     print(f"After R, S, T, L, N and E, you have {wordAsString}")
-    print("The word was: ", word)
     solved = finalRound()
     if solved:
         print(f"Winnner! Congratulations! You have won {r}, bringing your total to {r+winnerTotal}!")
     else:
-        print(f"Unfortuneately that was incorrect. You still win {winnerTotal}.")
+        print(f"Unfortuneately that was incorrect. The word was {word}. You still win {winnerTotal}.")
     playGame = False
     
