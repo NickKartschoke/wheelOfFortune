@@ -9,6 +9,7 @@ import time
 import threading
 import sys
 
+#Read input
 def readFile():
     file_path = (r"C:\Users\nickk\repo\WheelOfFortune\words_alpha.txt")
     f = open(file_path)
@@ -16,13 +17,14 @@ def readFile():
     f.close()
     return word_dict
 
+#Convert a list to a string
 def convertToString(list):
     newString = ""
     for i in list:
         newString += i
     return newString
 
-
+#Runs that players turn
 def playerTurn(p,g,name):
     fail = False
     solvedPlayer = False
@@ -80,6 +82,7 @@ def playerTurn(p,g,name):
             solvedPlayer = True
     return solvedPlayer
 
+#If player wants to spin wheel and guess a consonant
 def guessConsonant(p,g,land):
     user_input = input("Enter a consonant: ")
     user_input = user_input.lower()
@@ -97,6 +100,7 @@ def guessConsonant(p,g,land):
         fail = True
     return fail
 
+#If player wants to guess a vowel
 def guessVowel(p,g):
     user_input = input("Enter a vowel: ")
     user_input = user_input.lower()
@@ -114,6 +118,7 @@ def guessVowel(p,g):
     p[g] -= 250
     return fail
 
+#If player wants to attempt to solve
 def solve():
     user_input = input("Enter a word: ")
     user_input = user_input.lower()
@@ -127,6 +132,7 @@ def solve():
         fail=True
     return fail
 
+#Final Round Block
 def finalRound():
     consonant1 = input("Enter a consonant: ")
     while consonant1 not in finalConsonants:
@@ -169,15 +175,15 @@ def finalRound():
         time.cancel()
     return g == word
 
+#Timer
 def time_expired():
     global timeFail
     timeFail = True
     return True
 
+#Global Variable Delarations
 timeFail = False
 lines = readFile()
-check = False
-playGame = True
 wordsUsed = list()
 vowels = {'a','e','i','o','u'}
 consonants = {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'}
@@ -187,109 +193,111 @@ player2 = {'game1':0,'game2':0}
 player3 = {'game1':0,'game2':0}
 wheel = ['Bankrupt',750,800,300,200,1000,500,400,300,200,'Free Spin',700,200,150,450,'Lose a Turn',200,400,250,150,400,600,250,350]
 solved = False
-while playGame:
+
+#Game 1
+rand = random.randint(0,len(lines))
+wordList = list(lines[rand])
+word = lines[rand]
+while word in wordsUsed:
     rand = random.randint(0,len(lines))
     wordList = list(lines[rand])
     word = lines[rand]
-    while word in wordsUsed:
-        rand = random.randint(0,len(lines))
-        wordList = list(lines[rand])
-        word = lines[rand]
-    wordsUsed.append(word)
-    blankWord = list('_'*len(word))
-    print(f"There is {len(blankWord)} letters. Good Luck!")
-    check = False
-    print(word)
-    while not solved:
-        char_loaction = list()
-        if '_' not in blankWord:
-            print("You win! The word was: ", word)
-            break
-        solved = playerTurn(player1,'game1','Player 1')
-        if not solved:
-            solved = playerTurn(player2,'game1', 'Player 2')
-        if not solved:
-            solved = playerTurn(player3,'game1','Player 3')
-    
-    #On to Game 2
-    lettersGuessed = []
-    vowels = {'a','e','i','o','u'}
-    consonants = {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'}
+wordsUsed.append(word)
+blankWord = list('_'*len(word))
+print(f"There is {len(blankWord)} letters. Good Luck!")
+check = False
+print(word)
+while not solved:
+    char_loaction = list()
+    if '_' not in blankWord:
+        print("You win! The word was: ", word)
+        break
+    solved = playerTurn(player1,'game1','Player 1')
+    if not solved:
+        solved = playerTurn(player2,'game1', 'Player 2')
+    if not solved:
+        solved = playerTurn(player3,'game1','Player 3')
+
+#On to Game 2
+lettersGuessed = []
+vowels = {'a','e','i','o','u'}
+consonants = {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'}
+rand = random.randint(0,len(lines))
+wordList = list(lines[rand])
+word = lines[rand]
+while word in wordsUsed:
     rand = random.randint(0,len(lines))
     wordList = list(lines[rand])
     word = lines[rand]
-    while word in wordsUsed:
-        rand = random.randint(0,len(lines))
-        wordList = list(lines[rand])
-        word = lines[rand]
-    wordsUsed.append(word)
-    blankWord = list('_'*len(word))
-    print(f"There is {len(blankWord)} letters. Good Luck!")
-    check = False
-    solved = False
-    print(word)
-    while not solved:
-        char_loaction = list()
-        if '_' not in blankWord:
-            print("You win! The word was: ", word)
-            break
-        solved = playerTurn(player1,'game2','Player 1')
-        if not solved:
-            solved = playerTurn(player2,'game2', 'Player 2')
-        if not solved:
-            solved = playerTurn(player3,'game2','Player 3')
-    
-    player1Total = player1['game1'] + player1['game2']
-    player2Total = player2['game1'] + player2['game2']
-    player3Total = player3['game1'] + player3['game2']
-    if player1Total > player2Total and player1Total > player3Total:
-        winner = 'Player 1'
-        print(f"Player 1 won ${player1Total} and was the winner and will move on to the final round")
-        print(f"Player 2 won ${player2Total}")
-        print(f"Player 3 won ${player3Total}")
-        winnerTotal = player1Total
-    elif player2Total > player3Total:
-        winner = 'Player 2'
-        print(f"Player 2 won ${player2Total} and was the winner and will move on to the final round")
-        print(f"Player 1 won ${player1Total}")
-        print(f"Player 3 won ${player3Total}")
-        winnerTotal = player2Total
-    else:
-        winner = 'Player 3'
-        print(f"Player 3 won ${player3Total} and was the winner and will move on to the final round")
-        print(f"Player 1 won ${player1Total}")
-        print(f"Player 2 won ${player2Total}")
-        winnerTotal = player3Total
-    
-    print("Moving on to the Final Round\n============================\n")
-    print(f"Congratulations {winner}")
-    r = random.randint(3,10)*10000
-    finalVowels = {'a','i','o','u'}
-    finalConsonants = {'b','c','d','f','g','h','j','k','m','p','q','v','w','x','y','z'}
-    given = ['r','s','t','l','n','e']
+wordsUsed.append(word)
+blankWord = list('_'*len(word))
+print(f"There is {len(blankWord)} letters. Good Luck!")
+check = False
+solved = False
+print(word)
+while not solved:
+    char_loaction = list()
+    if '_' not in blankWord:
+        print("You win! The word was: ", word)
+        break
+    solved = playerTurn(player1,'game2','Player 1')
+    if not solved:
+        solved = playerTurn(player2,'game2', 'Player 2')
+    if not solved:
+        solved = playerTurn(player3,'game2','Player 3')
+
+player1Total = player1['game1'] + player1['game2']
+player2Total = player2['game1'] + player2['game2']
+player3Total = player3['game1'] + player3['game2']
+if player1Total > player2Total and player1Total > player3Total:
+    winner = 'Player 1'
+    print(f"Player 1 won ${player1Total} and was the winner and will move on to the final round")
+    print(f"Player 2 won ${player2Total}")
+    print(f"Player 3 won ${player3Total}")
+    winnerTotal = player1Total
+elif player2Total > player3Total:
+    winner = 'Player 2'
+    print(f"Player 2 won ${player2Total} and was the winner and will move on to the final round")
+    print(f"Player 1 won ${player1Total}")
+    print(f"Player 3 won ${player3Total}")
+    winnerTotal = player2Total
+else:
+    winner = 'Player 3'
+    print(f"Player 3 won ${player3Total} and was the winner and will move on to the final round")
+    print(f"Player 1 won ${player1Total}")
+    print(f"Player 2 won ${player2Total}")
+    winnerTotal = player3Total
+
+#Final Round
+print("Moving on to the Final Round\n============================\n")
+print(f"Congratulations {winner}")
+r = random.randint(3,10)*10000
+finalVowels = {'a','i','o','u'}
+finalConsonants = {'b','c','d','f','g','h','j','k','m','p','q','v','w','x','y','z'}
+given = ['r','s','t','l','n','e']
+rand = random.randint(0,len(lines))
+wordList = list(lines[rand])
+word = lines[rand]
+while word in wordsUsed:
     rand = random.randint(0,len(lines))
     wordList = list(lines[rand])
     word = lines[rand]
-    while word in wordsUsed:
-        rand = random.randint(0,len(lines))
-        wordList = list(lines[rand])
-        word = lines[rand]
-    wordsUsed.append(word)
-    blankWord = list('_'*len(word))
-    print(f"There is {len(blankWord)} letters. Good Luck!")
-    print("You are given R, S, T, L, N and E!")
-    for j in range(0,len(given)):
-        for i in range(0,len(word)):
-                if  wordList[i] == given[j]:
-                    blankWord[i] = given[j]
-    wordAsString = convertToString(blankWord)
-    print(f"After R, S, T, L, N and E, you have {wordAsString}")
-    print(word)
-    solved = finalRound()
-    if solved and not timeFail:
-        print(f"Winnner! Congratulations! You have won ${r}, bringing your total to ${r+winnerTotal}!")
-    elif solved:
-        print(f"That was correct, but too slow. You win ${winnerTotal}.")
-    else:
-        print(f"Unfortuneately you did not win. The word was {word}. You  win ${winnerTotal}.")
-    playGame = False
+wordsUsed.append(word)
+blankWord = list('_'*len(word))
+print(f"There is {len(blankWord)} letters. Good Luck!")
+print("You are given R, S, T, L, N and E!")
+for j in range(0,len(given)):
+    for i in range(0,len(word)):
+            if  wordList[i] == given[j]:
+                blankWord[i] = given[j]
+wordAsString = convertToString(blankWord)
+print(f"After R, S, T, L, N and E, you have {wordAsString}")
+print(word)
+solved = finalRound()
+if solved and not timeFail:
+    print(f"Winnner! Congratulations! You have won ${r}, bringing your total to ${r+winnerTotal}!")
+elif solved:
+    print(f"That was correct, but too slow. You win ${winnerTotal}.")
+else:
+    print(f"Unfortuneately you did not win. The word was {word}. You  win ${winnerTotal}.")
+playGame = False
