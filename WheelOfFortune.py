@@ -1,8 +1,13 @@
 from asyncio import constants
 from asyncore import read
 from curses.ascii import isalpha
+from multiprocessing.spawn import import_main_path
+from os import kill
 import random
 from re import S
+import time
+import threading
+import sys
 
 def readFile():
     file_path = (r"C:\Users\nickk\repo\WheelOfFortune\words_alpha.txt")
@@ -126,11 +131,13 @@ def finalRound():
     consonant1 = input("Enter a consonant: ")
     while consonant1 not in finalConsonants:
         consonant1 = input("Error: Enter a valid consonant: ")
+    finalConsonants.remove(consonant1)
     consonant2 = input("Enter a consonant: ")
     while consonant2 not in finalConsonants:
         consonant2 = input("Error: Enter a valid consonant: ")
+    finalConsonants.remove(consonant2)
     consonant3 = input("Enter a consonant: ")
-    while consonant2 not in finalConsonants:
+    while consonant3 not in finalConsonants:
         consonant2 = input("Error: Enter a valid consonant: ")
     v = input("Enter a vowel: ")
     while v not in finalVowels:
@@ -143,17 +150,31 @@ def finalRound():
         if  wordList[i] == consonant2:
                 blankWord[i] = consonant2
     for i in range(0,len(word)):
-        if  wordList[i] == consonant2:
-                blankWord[i] = consonant2
+        if  wordList[i] == consonant3:
+                blankWord[i] = consonant3
     for i in range(0,len(word)):
         if  wordList[i] == v:
                 blankWord[i] = v
     wordAsString = convertToString(blankWord)
     print(f"After your guesses, you have {wordAsString}")
     print("\nYou have 10 seconds. Good Luck!")
+    time = threading.Timer(10, time_expired)
+    time.start()
     g = input("\nGuess: ")
+    if not timeFail:
+        print("You answered the question in time!")
+        time.cancel()
+    else:
+        print("You did not answer the question in time!")
+        time.cancel()
     return g == word
 
+def time_expired():
+    global timeFail
+    timeFail = True
+    return True
+
+timeFail = False
 lines = readFile()
 check = False
 playGame = True
@@ -161,7 +182,7 @@ wordsUsed = list()
 vowels = {'a','e','i','o','u'}
 consonants = {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'}
 lettersGuessed = []
-player1 = {'game1':1500,'game2':1500}
+player1 = {'game1':0,'game2':0}
 player2 = {'game1':0,'game2':0}
 player3 = {'game1':0,'game2':0}
 wheel = ['Bankrupt',750,800,300,200,1000,500,400,300,200,'Free Spin',700,200,150,450,'Lose a Turn',200,400,250,150,400,600,250,350]
@@ -178,6 +199,7 @@ while playGame:
     blankWord = list('_'*len(word))
     print(f"There is {len(blankWord)} letters. Good Luck!")
     check = False
+    print(word)
     while not solved:
         char_loaction = list()
         if '_' not in blankWord:
@@ -205,6 +227,7 @@ while playGame:
     print(f"There is {len(blankWord)} letters. Good Luck!")
     check = False
     solved = False
+    print(word)
     while not solved:
         char_loaction = list()
         if '_' not in blankWord:
@@ -219,7 +242,7 @@ while playGame:
     player1Total = player1['game1'] + player1['game2']
     player2Total = player2['game1'] + player2['game2']
     player3Total = player3['game1'] + player3['game2']
-    if player1Total > player2Total and player1Total > player2Total:
+    if player1Total > player2Total and player1Total > player3Total:
         winner = 'Player 1'
         print(f"Player 1 won ${player1Total} and was the winner and will move on to the final round")
         print(f"Player 2 won ${player2Total}")
@@ -261,10 +284,12 @@ while playGame:
                     blankWord[i] = given[j]
     wordAsString = convertToString(blankWord)
     print(f"After R, S, T, L, N and E, you have {wordAsString}")
+    print(word)
     solved = finalRound()
-    if solved:
-        print(f"Winnner! Congratulations! You have won {r}, bringing your total to {r+winnerTotal}!")
+    if solved and not timeFail:
+        print(f"Winnner! Congratulations! You have won ${r}, bringing your total to ${r+winnerTotal}!")
+    elif solved:
+        print(f"That was correct, but too slow. You win ${winnerTotal}.")
     else:
-        print(f"Unfortuneately that was incorrect. The word was {word}. You still win {winnerTotal}.")
+        print(f"Unfortuneately you did not win. The word was {word}. You  win ${winnerTotal}.")
     playGame = False
-    
