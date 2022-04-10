@@ -1,3 +1,4 @@
+from asyncio import constants
 from asyncore import read
 from curses.ascii import isalpha
 import random
@@ -26,12 +27,26 @@ def playerTurn(p,g,name):
             option = input("Press 1 to spin the wheel and guess. Press 2 to buy a vowel. Press 3 to solve: ")
         else:
             option = input("Press 1 to spin the wheel and guess. Press 3 to solve: ")
-        if p[g] >= 250:
-            while option != '1' and option != '2' and option != '3':
-                option = input("Error: Press 1 to spin the wheel and guess. Press 2 to buy a vowel. Press 3 to solve: ")
-        else:
+        if not len(vowels) == 0 and not len(consonants) == 0:
+            if p[g] >= 250:
+                while option != '1' and option != '2' and option != '3':
+                    option = input("Error: Press 1 to spin the wheel and guess. Press 2 to buy a vowel. Press 3 to solve: ")
+            else:
+                while option != '1' and option != '3':
+                    option = input("Error: Press 1 to spin the wheel and guess. Press 3 to solve: ")
+        elif len(consonants) == 0:
+            if p[g] >= 250:
+                while option != '2' and option != '3':
+                    option = input("Error: Press 2 to buy a vowel. Press 3 to solve: ")
+            else:
+                while option != '3':
+                    option = input("Press 3 to solve: ")
+        elif len(vowels) == 0:
             while option != '1' and option != '3':
-                option = input("Error: Press 1 to spin the wheel and guess. Press 3 to solve: ")
+                option = input("Error: Press 1 to buy a consonant. Press 3 to solve: ")
+        else:
+            while option != '3':
+                option = input("Press 3 to solve: ")        
         if option == '1':
             land = random.randint(0,len(wheel)-1)
             if wheel[land] == 'Bankrupt':
@@ -106,6 +121,38 @@ def solve():
         fail=True
     return fail
 
+def finalRound():
+    consonant1 = input("Enter a consonant: ")
+    while consonant1 not in finalConsonants:
+        consonant1 = input("Error: Enter a valid consonant: ")
+    consonant2 = input("Enter a consonant: ")
+    while consonant2 not in finalConsonants:
+        consonant2 = input("Error: Enter a valid consonant: ")
+    consonant3 = input("Enter a consonant: ")
+    while consonant2 not in finalConsonants:
+        consonant2 = input("Error: Enter a valid consonant: ")
+    v = input("Enter a vowel: ")
+    while v not in finalVowels:
+        v = input("Error: Enter a valid vowel: ")
+    guesses = [consonant1, consonant2,consonant3,v]
+    for i in range(0,len(word)):
+        if  wordList[i] == consonant1:
+                blankWord[i] = consonant1
+    for i in range(0,len(word)):
+        if  wordList[i] == consonant2:
+                blankWord[i] = consonant2
+    for i in range(0,len(word)):
+        if  wordList[i] == consonant2:
+                blankWord[i] = consonant2
+    for i in range(0,len(word)):
+        if  wordList[i] == v:
+                blankWord[i] = v
+    wordAsString = convertToString(blankWord)
+    print(f"After your guesses, you have {wordAsString}")
+    print("\nYou have 10 seconds. Good Luck!")
+    g = input("\nGuess: ")
+    return g == word
+
 lines = readFile()
 check = False
 playGame = True
@@ -113,7 +160,7 @@ wordsUsed = list()
 vowels = {'a','e','i','o','u'}
 consonants = {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'}
 lettersGuessed = []
-player1 = {'game1':0,'game2':0}
+player1 = {'game1':1500,'game2':1500}
 player2 = {'game1':0,'game2':0}
 player3 = {'game1':0,'game2':0}
 wheel = ['Bankrupt',750,800,300,200,1000,500,400,300,200,'Free Spin',700,200,150,450,'Lose a Turn',200,400,250,150,400,600,250,350]
@@ -173,18 +220,51 @@ while playGame:
     player3Total = player3['game1'] + player3['game2']
     if player1Total > player2Total and player1Total > player2Total:
         winner = 'Player 1'
-        print("Player 1 won ${player1Total} and was the winner and will move on to the final round")
+        print(f"Player 1 won ${player1Total} and was the winner and will move on to the final round")
         print(f"Player 2 won ${player2Total}")
         print(f"Player 3 won ${player3Total}")
+        winnerTotal = player1Total
     elif player2Total > player3Total:
         winner = 'Player 2'
-        print("Player 2 won ${player2Total} and was the winner and will move on to the final round")
+        print(f"Player 2 won ${player2Total} and was the winner and will move on to the final round")
         print(f"Player 1 won ${player1Total}")
         print(f"Player 3 won ${player3Total}")
+        winnerTotal = player2Total
     else:
         winner = 'Player 3'
-        print("Player 3 won ${player3Total} and was the winner and will move on to the final round")
+        print(f"Player 3 won ${player3Total} and was the winner and will move on to the final round")
         print(f"Player 1 won ${player1Total}")
         print(f"Player 2 won ${player2Total}")
+        winnerTotal = player3Total
+    
+    print("Moving on to the Final Round\n============================\n")
+    print(f"Congratulations {winner}")
+    r = random.randint(3,10)*10000
+    finalVowels = {'a','i','o','u'}
+    finalConsonants = {'b','c','d','f','g','h','j','k','m','p','q','v','w','x','y','z'}
+    given = ['r','s','t','l','n','e']
+    rand = random.randint(0,len(lines))
+    wordList = list(lines[rand])
+    word = lines[rand]
+    while word in wordsUsed:
+        rand = random.randint(0,len(lines))
+        wordList = list(lines[rand])
+        word = lines[rand]
+    wordsUsed.append(word)
+    blankWord = list('_'*len(word))
+    print(f"There is {len(blankWord)} letters. Good Luck!")
+    print("You are given R, S, T, L, N and E!")
+    for j in range(0,len(given)):
+        for i in range(0,len(word)):
+                if  wordList[i] == given[j]:
+                    blankWord[i] = given[j]
+    wordAsString = convertToString(blankWord)
+    print(f"After R, S, T, L, N and E, you have {wordAsString}")
+    print("The word was: ", word)
+    solved = finalRound()
+    if solved:
+        print(f"Winnner! Congratulations! You have won {r}, bringing your total to {r+winnerTotal}!")
+    else:
+        print(f"Unfortuneately that was incorrect. You still win {winnerTotal}.")
     playGame = False
     
