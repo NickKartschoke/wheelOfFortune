@@ -206,7 +206,6 @@ wordsUsed.append(word)
 blankWord = list('_'*len(word))
 print(f"There is {len(blankWord)} letters. Good Luck!")
 check = False
-print(word)
 while not solved:
     char_loaction = list()
     if '_' not in blankWord:
@@ -234,7 +233,6 @@ blankWord = list('_'*len(word))
 print(f"There is {len(blankWord)} letters. Good Luck!")
 check = False
 solved = False
-print(word)
 while not solved:
     char_loaction = list()
     if '_' not in blankWord:
@@ -292,7 +290,6 @@ for j in range(0,len(given)):
                 blankWord[i] = given[j]
 wordAsString = convertToString(blankWord)
 print(f"After R, S, T, L, N and E, you have {wordAsString}")
-print(word)
 solved = finalRound()
 if solved and not timeFail:
     print(f"Winnner! Congratulations! You have won ${r}, bringing your total to ${r+winnerTotal}!")
