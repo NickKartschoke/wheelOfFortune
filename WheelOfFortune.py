@@ -3,7 +3,7 @@ import threading
 
 #Read input
 def readFile():
-    file_path = (r"repo\WheelOfFortune\words_alpha.txt")
+    file_path = (r"words_test.txt")
     f = open(file_path)
     word_dict = f.read().split('\n')
     f.close()
@@ -176,6 +176,7 @@ def time_expired():
 #Global Variable Delarations
 timeFail = False
 lines = readFile()
+print(lines)
 wordsUsed = list()
 vowels = {'a','e','i','o','u'}
 consonants = {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'}
@@ -213,11 +214,11 @@ while not solved:
 lettersGuessed = []
 vowels = {'a','e','i','o','u'}
 consonants = {'b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','y','z'}
-rand = random.randint(0,len(lines))
+rand = random.randint(0,len(lines)-1)
 wordList = list(lines[rand])
 word = lines[rand]
 while word in wordsUsed:
-    rand = random.randint(0,len(lines))
+    rand = random.randint(0,len(lines)-1)
     wordList = list(lines[rand])
     word = lines[rand]
 wordsUsed.append(word)
@@ -265,11 +266,11 @@ r = random.randint(3,10)*10000
 finalVowels = {'a','i','o','u'}
 finalConsonants = {'b','c','d','f','g','h','j','k','m','p','q','v','w','x','y','z'}
 given = ['r','s','t','l','n','e']
-rand = random.randint(0,len(lines))
+rand = random.randint(0,len(lines)-1)
 wordList = list(lines[rand])
 word = lines[rand]
 while word in wordsUsed:
-    rand = random.randint(0,len(lines))
+    rand = random.randint(0,len(lines)-1)
     wordList = list(lines[rand])
     word = lines[rand]
 wordsUsed.append(word)
