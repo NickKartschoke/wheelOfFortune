@@ -1,17 +1,9 @@
-from asyncio import constants
-from asyncore import read
-from curses.ascii import isalpha
-from multiprocessing.spawn import import_main_path
-from os import kill
 import random
-from re import S
-import time
 import threading
-import sys
 
 #Read input
 def readFile():
-    file_path = (r"C:\Users\nickk\repo\WheelOfFortune\words_alpha.txt")
+    file_path = (r"repo\WheelOfFortune\words_alpha.txt")
     f = open(file_path)
     word_dict = f.read().split('\n')
     f.close()
